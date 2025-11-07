@@ -1,0 +1,59 @@
+# Problem: Number of Parallelograms - https://codeforces.com/contest/660/problem/D
+
+#include <bits/stdc++.h>
+using namespace std;
+
+long long gcd(long long a, long long b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<pair<long long, long long>> points(n);
+    for (int i = 0; i < n; i++) {
+        cin >> points[i].first >> points[i].second;
+    }
+
+
+    map<pair<pair<long long, long long>, long long>, long long> seen;
+
+    for (int i = 0; i < n; i++) {
+        long long x1 = points[i].first;
+        long long y1 = points[i].second;
+
+        for (int j = i + 1; j < n; j++) {
+            long long x2 = points[j].first;
+            long long y2 = points[j].second;
+
+            long long dx = x2 - x1;
+            long long dy = y2 - y1;
+
+            long long dis2 = dx*dx + dy*dy;
+
+            pair<long long, long long> slope;
+
+            if (dx != 0) {
+                long long g = gcd(dy, dx);
+                slope = {dy / g, dx / g};
+            } else {
+                slope = {LLONG_MAX, 0}; 
+            }
+
+            seen[{slope, dis2}]++;
+        }
+    }
+
+    long long ans = 0;
+    for (auto &p : seen) {
+        long long val = p.second;
+        ans += val * (val - 1) / 2;
+    }
+
+    cout << ans / 2 << "\n";
+
+    return 0;
+}
